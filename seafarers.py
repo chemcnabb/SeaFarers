@@ -1,7 +1,7 @@
 # Sample Python/Pygame Programs
 # Simpson College Computer Science
 # http://cs.simpson.edu
-
+#my first pygame
 import pygame
 
 # Define some colors
