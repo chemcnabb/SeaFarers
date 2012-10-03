@@ -3,13 +3,19 @@ import pygame
 from pygame.locals import MOUSEBUTTONDOWN
 import os
 from math import sin, cos, pi, degrees, atan2
+from msg import Text
 
 class Ship(pygame.sprite.Sprite):
     ship = pygame.image.load(os.path.join(os.getcwd(), 'game/data/images/sailboat.png'))
-    angle = 90
+    angle = 0
     SPEED = 2
     speedx = 2
     speedy = 2
+    turnDirection = 0
+    turnSpeed = 50
+    is_turning = True
+    mouse_pos = False
+    targetAngle = 90
 
     def __init__(self, screen):
         self.screen = screen
@@ -18,7 +24,8 @@ class Ship(pygame.sprite.Sprite):
         self.pos = [self.x, self.y]
         self.rect = self.ship.get_rect()
         self.sprite = pygame.transform.rotate(self.ship, self.angle)
-
+        self.currentAngle = self.angle
+        self.targetAngle = self.currentAngle
         pygame.sprite.Sprite.__init__(self)
 
 
@@ -26,39 +33,47 @@ class Ship(pygame.sprite.Sprite):
     def draw(self):
         self.screen.blit(self.sprite, (self.x, self.y))
 
-    def rot_center(self, image, angle):
+    def rotate_ship(self, image, angle):
         """rotate an image while keeping its center and size"""
         orig_rect = image.get_rect()
         rot_image = pygame.transform.rotate(image, angle)
-        rot_rect = orig_rect.copy()
-        rot_rect.center = rot_image.get_rect().center
-        rot_image = rot_image.subsurface(rot_rect).copy()
-        return rot_image
+        self.rect = orig_rect.copy()
+        self.rect.center = rot_image.get_rect().center
+        self.sprite = rot_image.subsurface(self.rect).copy()
+        #self.currentAngle = angle
+        #return rot_image
+
+
+    def set_target_angle(self):
+        if self.mouse_pos:
+            myRadians = atan2((self.mouse_pos[1] - self.y), (self.mouse_pos[0] - self.x))
+            mydegrees = round(myRadians * 180 / pi)
+            self.targetAngle = -mydegrees
 
 
 
-    def update(self):
-        #rotate the car
-        self.sprite = self.rot_center(self.ship, self.angle)#pygame.transform.rotate(self.ship, self.angle)
-        self.rect = self.sprite.get_rect(center = self.rect.center)
 
-        self.speedx = sin(self.angle * (pi/180))# * self.SPEED
-        self.speedy = cos(self.angle * (pi/180))# * self.SPEED
+    def write_to_screen(self):
+        statusText = Text((50, 10), r"""
+        target angle: %s
+        current angle: %s
+        """ % (self.targetAngle, self.currentAngle))
+        self.screen.blit(statusText.image, statusText.pos)
 
-        #move the car
-        self.x += self.speedx
-        self.y += self.speedy
+    def update(self, seconds):
+        # write to screen
+        self.write_to_screen()
+        if self.mouse_pos:
+            self.rotate_ship(self.ship, self.targetAngle)
 
 
-        self.rect = self.sprite.get_rect()
-        self.rect.center = self.x, self.y
 
-    def get_angle(self, mousePointerCent):
-        angle = atan2(-(mousePointerCent[1] - self.y), mousePointerCent[0] - self.x)
-        return angle
+
 
     def events(self, event):
         if event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-            mousePointerCent = pygame.mouse.get_pos()
-            angle = self.get_angle(mousePointerCent)
-            self.angle=degrees(angle)
+            self.is_turning = True
+            self.mouse_pos = pygame.mouse.get_pos()
+            self.set_target_angle()
+
+
