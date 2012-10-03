@@ -1,20 +1,32 @@
-#
-# Confidential and Proprietary Source Code
-#
-# This Digital Domain Productions, Inc. ("DDPI") source code, including without
-# limitation any human-readable computer programming code and associated
-# documentation (together "Source Code"), contains valuable confidential,
-# proprietary and trade secret information of DDPI and is protected by the laws
-# of the United States and other countries. DDPI may, from time to time,
-# authorize specific employees to use the Source Code internall at DDPI's
-# premises solely for developing, updating, and/or troubleshooting the Source
-# Code. Any other use of the Source Code, including without limitation any
-# disclosure, copying or reproduction, without the prior written authorization
-# of DDPI is strictly prohibited.
-#
-# Copyright (c) [2012] Digital Domain Productions, Inc. All rights reserved.
-#
-#
-#
-# Author: cmcnabb
-# Date: 10/2/12
+import pygame
+class Text(pygame.sprite.Sprite):
+    """ a helper class to write text on the screen """
+    number = 0
+    book = {}
+    def __init__(self, pos, msg):
+        self.number = Text.number # get a unique number
+        Text.number += 1 # prepare number for next Textsprite
+        Text.book[self.number] = self # store myself into the book
+        pygame.sprite.Sprite.__init__(self)
+        self.pos = [0.0,0.0]
+        self.pos[0] = pos[0]
+        self.pos[1] = pos[1]
+        self.msg = msg
+        self.changemsg(msg)
+
+    def update(self, seconds):
+        pass
+
+    def changemsg(self,msg):
+        self.msg = msg
+        self.image = write(self.msg)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.pos[0]
+        self.rect.centery = self.pos[1]
+
+def write(msg="pygame is cool"):
+    """helper function for the Text sprite"""
+    myfont = pygame.font.SysFont("None", 28)
+    mytext = myfont.render(msg, True, (0,0,0))
+    mytext = mytext.convert_alpha()
+    return mytext
