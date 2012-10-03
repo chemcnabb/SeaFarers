@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
@@ -413,3 +414,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+=======
+>>>>>>> 9b0d3ddde49c846ed420b3a0e450ca1ce42e6c17

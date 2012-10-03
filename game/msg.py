@@ -29,4 +29,8 @@ def write(msg="pygame is cool"):
     myfont = pygame.font.SysFont("None", 28)
     mytext = myfont.render(msg, True, (0,0,0))
     mytext = mytext.convert_alpha()
+<<<<<<< HEAD
     return mytext
+=======
+    return mytext
+>>>>>>> 9b0d3ddde49c846ed420b3a0e450ca1ce42e6c17
