@@ -19,8 +19,9 @@ class Ship(pygame.sprite.Sprite):
 
     def __init__(self, screen):
         self.screen = screen
-        self.x = 350 #self.screen.width/2
-        self.y = 250 #self.screen.height/2
+        screen_size = self.screen.get_size()
+        self.x = screen_size[0]/2
+        self.y = screen_size[1]/2
         self.pos = [self.x, self.y]
         self.rect = self.ship.get_rect()
         self.sprite = pygame.transform.rotate(self.ship, self.angle)
