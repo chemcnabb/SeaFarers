@@ -41,7 +41,7 @@ class Ship(pygame.sprite.Sprite):
         self.rect = orig_rect.copy()
         self.rect.center = rot_image.get_rect().center
         self.sprite = rot_image.subsurface(self.rect).copy()
-        #self.currentAngle = angle
+        self.currentAngle = angle
         #return rot_image
 
 
@@ -49,7 +49,7 @@ class Ship(pygame.sprite.Sprite):
         if self.mouse_pos:
             myRadians = atan2((self.mouse_pos[1] - self.y), (self.mouse_pos[0] - self.x))
             mydegrees = round(myRadians * 180 / pi)
-            self.targetAngle = -mydegrees
+            self.targetAngle = -mydegrees % 360
 
 
 
@@ -64,8 +64,19 @@ class Ship(pygame.sprite.Sprite):
     def update(self, seconds):
         # write to screen
         self.write_to_screen()
+        targetFirst = (self.targetAngle - self.currentAngle) % 360
+        currentFirst = (self.currentAngle - self.targetAngle) % 360
+
         if self.mouse_pos:
-            self.rotate_ship(self.ship, self.targetAngle)
+            if targetFirst > currentFirst:
+                mod = self.currentAngle - 1
+                self.rotate_ship(self.ship, mod % 360)
+            elif currentFirst > targetFirst:
+                mod = self.currentAngle + 1
+                self.rotate_ship(self.ship, mod % 360)
+            if self.currentAngle == self.targetAngle:
+                self.mouse_pos = False
+
 
 
 
